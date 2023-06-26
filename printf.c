@@ -25,7 +25,7 @@ int print_str(char *str)
 	int count;
 
 	if (*str ==0x00)
-		return (0x00);
+		return (print_char((int)*str));
 
 	while (*str != '\0')
 	{
@@ -45,7 +45,7 @@ int print_digit(int num, int base)
 {
         int count;
 	char *digits = "0123456789ABCDEF";
-	
+
 	count = 0;
 	if (num < base)
 		return print_char(digits[num]);
