@@ -3,6 +3,52 @@
 #include <stdarg.h>
 #include "main.h"
 
+/**                                              * print_char - prints character
+ * @c: character argument                        * Return: character
+ */
+int print_char(int c)
+{
+	return (write(1, &c, 1));
+}
+
+/**
+ * print_str - prints string
+ * @str: string argument
+ *
+ * Return: count
+ */
+int print_str(char *str)
+{
+	int count;
+
+	while (*str != '\0')
+	{
+		count = print_char((int)*str);
+		str++;
+		count++;
+	}
+	return (count);
+}
+
+
+/**                                              * print_digit - prints digits                   * @num: number argument
+ *                                               * Return: digit                                 */
+int print_digit(int num)
+{
+        int count;
+	char *digits = "0123456789";
+	
+	count = 0;
+	if (num < 10)
+		return print_char(digits[num]);
+
+	count = print_digit(num / 10);
+
+	return (count + print_digit(num % 10));
+}
+
+
+
 /**
  * check_format - checks the format of an argument
  * @specifier: the format specifier
@@ -12,29 +58,27 @@
  */
 int check_format(char specifier, va_list ap)
 {
-	int result;
+	int count;
 
-	result = 0;
+	count = 0;
 	if (specifier == 'c')
-		result += print_char(va_arg(ap, int));
+		count += print_char(va_arg(ap, int));
 	else if (specifier == 'd')
-		result += print_digit(va_arg(ap, int));
+		count += print_digit(va_arg(ap, int));
 	else if (specifier == 's')
-		result += print_str(va_arg(ap, char *));
-	else if (specifier == 'f')
-		result += print_float(va_arg(ap, double));
+		count += print_str(va_arg(ap, char *));
+	/*else if (specifier == 'f')
+	//	count += print_float(va_arg(ap, double));
+	//else if (specifier == 'u')
+		count += print_digit(va_arg(ap,int));*/
 	else if (specifier == '%')
-		result += print_char(va_arg(ap, char));
-	else if (specifier == 'u')
-		result += print_digit(va_arg(ap,int));
-	else if (specifier == '%')
-		result += print_char(va_arg(ap, int));
-	else if (specifier == 'p')
-		result += print_str(va_arg(ap, char *));
+		count += print_char(va_arg(ap, int));
+	/*else if (specifier == 'p')
+		count += print_str(va_arg(ap, char *));*/
 	else
-		result += write(1, &f_specifier, 1);
+		return (0);
 
-	return (result);
+	return (count);
 }
 
 
@@ -48,16 +92,16 @@ int _printf(const char *format, ...)
 {
 	va_list ap;
 
-	va_start(ap, format);
 	int count;
+	va_start(ap, format);
 
 	count = 0;
 	while (*format != '\0')
 	{
-		if (format == '%')
+		if (*format == '%')
 			count += check_format(*(++format), ap);
 		else
-			count += write(1, format, 1);
+			write(1, format, 1);
 		format++;
 	}
 
