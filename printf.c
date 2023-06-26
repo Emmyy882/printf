@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdio.h>
 #include <stdarg.h>
 #include "main.h"
 
@@ -21,6 +22,8 @@ int print_str(char *str)
 {
 	int count;
 
+	if (*str ==0x00)
+		return (0x00);
 	while (*str != '\0')
 	{
 		count = print_char((int)*str);
@@ -31,8 +34,11 @@ int print_str(char *str)
 }
 
 
-/**                                              * print_digit - prints digits                   * @num: number argument
- *                                               * Return: digit                                 */
+/**
+ * print_digit - prints digits
+ * @num: number argument
+ * Return: digit
+ */
 int print_digit(int num)
 {
         int count;
