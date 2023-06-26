@@ -8,7 +8,7 @@ int check_format(char specifier, va_list ap);
 
 int print_char(int c);
 
-int print_digit(int num);
+int print_digit(int num, int base);
 
 int print_str(char *str);
 

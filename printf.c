@@ -11,6 +11,7 @@
  */
 int print_char(int c)
 {
+
 	return (write(1, &c, 1));
 }
 
@@ -26,6 +27,7 @@ int print_str(char *str)
 
 	if (*str ==0x00)
 		return (0x00);
+
 	while (*str != '\0')
 	{
 		count = print_char((int)*str);
@@ -41,18 +43,18 @@ int print_str(char *str)
  * @num: number argument
  * Return: digit
  */
-int print_digit(int num)
+int print_digit(int num, int base)
 {
         int count;
-	char *digits = "0123456789";
+	char *digits = "0123456789ABCDEF";
 	
 	count = 0;
 	if (num < 10)
 		return print_char(digits[num]);
 
-	count = print_digit(num / 10);
+	count = print_digit(num / base, base);
 
-	return (count + print_digit(num % 10));
+	return (count + print_digit(num % base, base));
 }
 
 
@@ -71,10 +73,12 @@ int check_format(char specifier, va_list ap)
 	count = 0;
 	if (specifier == 'c')
 		count += print_char(va_arg(ap, int));
-	else if (specifier == 'd' || specifier == 'i')
-		count += print_digit(va_arg(ap, int));
+	else if (specifier == 'd')
+		count += print_digit(va_arg(ap, int), 10);
 	else if (specifier == 's')
 		count += print_str(va_arg(ap, char *));
+	else if (specifier == 'x' || specifier == 'i')
+		count += print_digit(va_arg(ap, int), 16);
 	/*else if (specifier == 'f')
 	//	count += print_float(va_arg(ap, double));
 	//else if (specifier == 'u')
