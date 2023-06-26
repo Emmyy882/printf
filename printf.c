@@ -47,11 +47,10 @@ int print_digit(int num, int base)
 	char *digits = "0123456789ABCDEF";
 	
 	count = 0;
-	if (num < 10)
+	if (num < base)
 		return print_char(digits[num]);
 
 	count = print_digit((num / base), base);
-
 	return (count + print_digit((num % base), base));
 }
 
