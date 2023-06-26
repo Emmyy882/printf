@@ -18,7 +18,6 @@ int print_char(int c)
 /**
  * print_str - prints string
  * @str: string argument
- *
  * Return: count
  */
 int print_str(char *str)
@@ -37,7 +36,6 @@ int print_str(char *str)
 	return (count);
 }
 
-
 /**
  * print_digit - prints digits
  * @num: number argument
@@ -52,9 +50,9 @@ int print_digit(int num, int base)
 	if (num < 10)
 		return print_char(digits[num]);
 
-	count = print_digit(num / base, base);
+	count = print_digit((num / base), base);
 
-	return (count + print_digit(num % base, base));
+	return (count + print_digit((num % base), base));
 }
 
 
@@ -64,7 +62,7 @@ int print_digit(int num, int base)
  * @specifier: the format specifier
  * @ap: argument pointer
  *
- * Return: result	
+ * Return: result
  */
 int check_format(char specifier, va_list ap)
 {	
