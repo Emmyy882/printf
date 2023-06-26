@@ -4,8 +4,10 @@
 #include <stdarg.h>
 #include "main.h"
 
-/**                                              * print_char - prints character
- * @c: character argument                        * Return: character
+/**
+ * print_char - prints character
+ * @c: character argument
+ * Return: character
  */
 int print_char(int c)
 {
@@ -60,16 +62,16 @@ int print_digit(int num)
  * @specifier: the format specifier
  * @ap: argument pointer
  *
- * Return: result
+ * Return: result	
  */
 int check_format(char specifier, va_list ap)
-{
+{	
 	int count;
 
 	count = 0;
 	if (specifier == 'c')
 		count += print_char(va_arg(ap, int));
-	else if (specifier == 'd')
+	else if (specifier == 'd' || specifier == 'i')
 		count += print_digit(va_arg(ap, int));
 	else if (specifier == 's')
 		count += print_str(va_arg(ap, char *));
