@@ -62,5 +62,5 @@ int _printf(const char *format, ...)
 	}
 
 	va_end(ap);
-	return (format);
+	return (count);
 }
