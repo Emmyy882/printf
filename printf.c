@@ -11,7 +11,6 @@
  */
 int print_char(int c)
 {
-
 	return (write(1, &c, 1));
 }
 
@@ -25,7 +24,7 @@ int print_str(char *str)
 	int count;
 
 	if (*str ==0x00)
-		return (print_char((int)*str));
+		return (0x00);
 
 	while (*str != '\0')
 	{
@@ -39,16 +38,17 @@ int print_str(char *str)
 /**
  * print_digit - prints digits
  * @num: number argument
- * Return: digit
+ * @base: the base of the number
+ * Return: number of bytes
  */
 int print_digit(int num, int base)
 {
         int count;
-	char *digits = "0123456789ABCDEF";
+	char *values = "0123456789ABCDEF";
 
 	count = 0;
 	if (num < base)
-		return print_char(digits[num]);
+		return print_char(values[num]);
 
 	count = print_digit((num / base), base);
 	return (count + print_digit((num % base), base));
@@ -70,16 +70,12 @@ int check_format(char specifier, va_list ap)
 	count = 0;
 	if (specifier == 'c')
 		count += print_char(va_arg(ap, int));
-	else if (specifier == 'd')
+	else if (specifier == 'd' || specifier == 'i')
 		count += print_digit(va_arg(ap, int), 10);
 	else if (specifier == 's')
 		count += print_str(va_arg(ap, char *));
-	else if (specifier == 'x' || specifier == 'i')
+	else if (specifier == 'x')
 		count += print_digit(va_arg(ap, int), 16);
-	/*else if (specifier == 'f')
-	//	count += print_float(va_arg(ap, double));
-	//else if (specifier == 'u')
-		count += print_digit(va_arg(ap,int));*/
 	else if (specifier == '%')
 		count += print_char(va_arg(ap, int));
 	/*else if (specifier == 'p')
@@ -105,6 +101,9 @@ int _printf(const char *format, ...)
 	va_start(ap, format);
 
 	count = 0;
+	if (*format == 0x00)
+		write(1, 0x00, 0);
+
 	while (*format != '\0')
 	{
 		if (*format == '%')
