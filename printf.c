@@ -1,118 +1,66 @@
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdarg.h>
 #include "main.h"
 
 /**
- * print_char - prints character
- * @c: character argument
- * Return: character
- */
-int print_char(int c)
+ *  * print_buffer - Prints the contents of the buffer if it exist
+ *   * @buffer: Array of chars
+ *    * @buff_ind: Index at which to add next char, represents the length.
+ *     */
+void print_buffer(char buffer[], int *buff_ind)
 {
-	return (write(1, &c, 1));
-}
-
-/**
- * print_str - prints string
- * @str: string argument
- * Return: count
- */
-int print_str(char *str)
-{
-	int count;
-
-	if (*str ==0x00)
-		return (0x00);
-
-	while (*str != '\0')
-	{
-		count = print_char((int)*str);
-		str++;
-		count++;
-	}
-	return (count);
-}
-
-/**
- * print_digit - prints digits
- * @num: number argument
- * @base: the base of the number
- * Return: number of bytes
- */
-int print_digit(int num, int base)
-{
-        int count;
-	char *values = "0123456789ABCDEF";
-
-	count = 0;
-	if (num < base)
-		return print_char(values[num]);
-
-	count = print_digit((num / base), base);
-	return (count + print_digit((num % base), base));
-}
-
-
-
-/**
- * check_format - checks the format of an argument
- * @specifier: the format specifier
- * @ap: argument pointer
- *
- * Return: result
- */
-int check_format(char specifier, va_list ap)
-{	
-	int count;
-
-	count = 0;
-	if (specifier == 'c')
-		count += print_char(va_arg(ap, int));
-	else if (specifier == 'd' || specifier == 'i')
-		count += print_digit(va_arg(ap, int), 10);
-	else if (specifier == 's')
-		count += print_str(va_arg(ap, char *));
-	else if (specifier == 'x')
-		count += print_digit(va_arg(ap, int), 16);
-	else if (specifier == '%')
-		count += print_char(va_arg(ap, int));
-	/*else if (specifier == 'p')
-		count += print_str(va_arg(ap, char *));*/
-	else
-		return (0);
-
-	return (count);
+	if (*buff_ind > 0)
+		write(1, &buffer[0], *buff_ind);
+	
+	*buff_ind = 0;
 }
 
 
 /**
- * _printf - prints arguents just like printf
- * @format: the known passed argument
- *
- * Return: expected format of result
+ * _printf - Printf function
+ * @format: format.
+ * Return: Printed chars
  */
 int _printf(const char *format, ...)
 {
-	va_list ap;
-
-	int count;
-	va_start(ap, format);
-
-	count = 0;
-	if (*format == 0x00)
-		write(1, 0x00, 0);
-
-	while (*format != '\0')
+	int i, printed = 0, printed_chars = 0;
+	int flags, width, precision, size, buff_ind = 0;
+	
+	va_list list;
+	char buffer[BUFF_SIZE];
+	
+	if (format == NULL)
+		return (-1);
+	
+	va_start(list, format);
+	for (i = 0; format && format[i] != '\0'; i++)
 	{
-		if (*format == '%')
-			count += check_format(*(++format), ap);
+		if (format[i] != '%')
+		{
+			buffer[buff_ind++] = format[i];
+			
+			if (buff_ind == BUFF_SIZE)
+				print_buffer(buffer, &buff_ind);
+			printed_chars++;
+		}
 		else
-			write(1, format, 1);
-		format++;
-	}
+		{
+			print_buffer(buffer, &buff_ind);
+			flags = get_flags(format, &i);
+			width = get_width(format, &i, list);
 
-	va_end(ap);
-	return (count);
+			precision = get_precision(format, &i, list);
+			size = get_size(format, &i);
+			
+			++i;
+			printed = handle_print(format, &i, list, buffer, flags, width, precision, size);
+			
+			if (printed == -1)
+				return (-1);
+			
+			printed_chars += printed;
+		}
+	}
+	print_buffer(buffer, &buff_ind);
+	
+	va_end(list);
+	return (printed_chars);
 }
